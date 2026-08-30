@@ -1,0 +1,7 @@
+logs:
+  - type: file
+    path: 'C:\ProgramData\recompiler\logs\backend.log'
+    service: binary-analysis-api
+    source: go
+    tags:
+      - env:development

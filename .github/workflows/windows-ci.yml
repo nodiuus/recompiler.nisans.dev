@@ -1,0 +1,81 @@
+name: Release checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application:
+    name: Application
+    runs-on: windows-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Configure the RawPDB helper
+        run: cmake -S rawpdb-helper -B rawpdb-helper/build -A x64
+
+      - name: Build the RawPDB helper
+        run: cmake --build rawpdb-helper/build --config Release --parallel
+
+      - name: Test the Go backend
+        working-directory: backend
+        run: go test -cover ./...
+
+      - name: Vet the Go backend
+        working-directory: backend
+        run: go vet ./...
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build the frontend
+        working-directory: frontend
+        run: npm run build
+
+  terraform:
+    name: Terraform
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Check Terraform formatting
+        working-directory: datadog/terraform
+        run: terraform fmt -check -recursive
+
+      - name: Initialize Terraform without a backend
+        working-directory: datadog/terraform
+        run: terraform init -backend=false -input=false
+
+      - name: Validate Terraform
+        working-directory: datadog/terraform
+        run: terraform validate -no-color

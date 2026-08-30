@@ -1,0 +1,11 @@
+/recompiler/
+.env
+/frontend/.env.local
+/frontend/.env.*.local
+/rawpdb-helper/build/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example

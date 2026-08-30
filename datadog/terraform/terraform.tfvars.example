@@ -1,0 +1,5 @@
+environment         = "production"
+service             = "binary-analysis-api"
+public_base_url     = "https://recompiler.nisans.dev"
+notification        = "@slack-binary-analysis"
+synthetics_locations = ["aws:us-east-1"]
