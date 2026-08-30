@@ -193,7 +193,7 @@ func ensureSemanticsFile(source, target string) error {
 	return nil
 }
 
-func buildArgs(config Config, rawAddress string, options Options, inputPath, outputPath, objectPath string) ([]string, error) {
+func buildArgs(config Config, rawAddress string, options Options, inputPath, outputPath string, objectPath string) ([]string, error) {
 	address, err := normalizeAddress(rawAddress)
 	if err != nil {
 		return nil, err

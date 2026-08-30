@@ -94,10 +94,6 @@ Copy-Item .env.example .env
 The backend loads `.env` from the repository root. A process environment
 variable has priority over the same variable in `.env`.
 
-> [!CAUTION]
-> Do not commit `.env`. Configure the Datadog API key in the Datadog Agent, not
-> in this project. The repository `.gitignore` file excludes `.env`.
-
 ### 2. Build the RawPDB helper
 
 This step is optional. Without the helper, the backend uses its Go PDB parser.
